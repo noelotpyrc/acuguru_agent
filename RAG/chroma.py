@@ -14,15 +14,18 @@ def get_or_create_collection(client, collection_name):
 
 # Add embeddings to ChromaDB
 
-def add_embeddings(collection, chunks, embeddings, file_name):
-    ids = [f"{file_name}_{i}" for i in range(len(chunks))]
-    metadatas = [{"chunk_idx": i, "source_file": file_name} for i in range(len(chunks))]
+def add_embeddings(collection, chunks, embeddings, ids, metadatas):
     collection.add(
         ids=ids,
         embeddings=embeddings,
         documents=chunks,
         metadatas=metadatas
     )
+
+# Delete embeddings from ChromaDB by ids
+
+def delete_embeddings(collection, ids):
+    collection.delete(ids=ids)
 
 # Search ChromaDB
 
