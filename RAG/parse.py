@@ -3,8 +3,30 @@ from llama_parse import LlamaParse
 import os
 import dotenv
 from pathlib import Path
-
+import re
 dotenv.load_dotenv()
+
+def extract_number(filename):
+    # Extract the first group of digits from the filename
+    match = re.search(r'(\d+)', filename)
+    return int(match.group(1)) if match else -1
+
+def merge_txt_files(input_folder, output_file):
+    """
+    Merge all .txt files in input_folder into output_file.
+    Files are merged in sorted order by filename.
+    """
+    input_folder = Path(input_folder)
+    txt_files = sorted(
+        input_folder.glob("*.txt"),
+        key=lambda f: extract_number(f.name)
+    )
+    with open(output_file, "w", encoding="utf-8") as outfile:
+        for txt_file in txt_files:
+            with open(txt_file, "r", encoding="utf-8") as infile:
+                outfile.write(infile.read())
+                outfile.write("\n")  # Optional: add newline between files
+    print(f"Merged {len(txt_files)} files into {output_file}")
 
 def main():
     parser = argparse.ArgumentParser(description="Parse PDF and save each page as a text file.")
