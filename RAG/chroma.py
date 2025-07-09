@@ -1,6 +1,13 @@
 import chromadb
 from chromadb.config import Settings
 
+client = chromadb.PersistentClient(
+    path="./chroma_store",            # folder on disk; delete to start fresh
+    settings=Settings(anonymized_telemetry=False)      # turn off phone-home
+)
+
+shanghanlun = client.get_or_create_collection("Shanghanlun")
+
 # ChromaDB management functions
 
 def get_chroma_client(db_path="./chroma_store"):
@@ -29,7 +36,7 @@ def delete_embeddings(collection, ids):
 
 # Search ChromaDB
 
-def search_chroma(collection, query_embedding, top_k=3):
+def search_chroma(query_embedding, top_k=3, collection=shanghanlun):
     res = collection.query(
         query_embeddings=[query_embedding],
         n_results=top_k
